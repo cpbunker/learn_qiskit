@@ -1,17 +1,17 @@
 '''
-https://github.com/cpbunker/learn/qiskit
+https://github.com/cpbunker/learn_qiskit
 '''
 
 import qiskit
 from qiskit import QuantumCircuit
 from qiskit import quantum_info as qi
-from qiskit import Aer
-from qiskit.providers.aer import AerSimulator
 
-from qiskit.visualization import plot_bloch_vector, plot_bloch_multivector, plot_histogram
+import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 #try:  plt.rcParams.update({"text.usetex": True,"font.family": "Times"})
 
+######################################################################
 #### bloch sphere visualization
 
 def bloch_qubits(state: qi.Statevector, my_title = '') -> None:
@@ -31,7 +31,8 @@ def bloch_state(state: qi.Statevector, vec0: str, vec1: str) -> None:
     '''
     Draw a (single or multiqubit) state on the bloch sphere with poles vec0, vec1
     '''
-    assert(isinstance(state, qi.Statevector));
+    from qiskit.visualization import plot_bloch_vector
+    if(not isinstance(state, qi.Statevector)): raise TypeError;
     statedict = state.to_dict();
     assert(vec0 in statedict and vec1 in statedict ); # allowed poles
 
@@ -50,7 +51,7 @@ def bloch_state(state: qi.Statevector, vec0: str, vec1: str) -> None:
     plot_bloch_vector([px, py, pz], title = '|0> = '+vec0+', |1> = '+vec1);
     plt.show();
 
-
+######################################################################
 #### circuit visualization
 
 def circuit_counts(qc: QuantumCircuit, shots = 1024) -> None:
@@ -60,8 +61,11 @@ def circuit_counts(qc: QuantumCircuit, shots = 1024) -> None:
     if qc has clbits, assume there is a measurment scheme manually set up
     if not we will just measure all the qubits to new clbits
     '''
+    from qiskit import Aer
+    from qiskit.providers.aer import AerSimulator
+    from qiskit.visualization import plot_histogram
     qc = qc.copy();
-    assert(isinstance(qc, QuantumCircuit))
+    if(not isinstance(qc, QuantumCircuit)): raise TypeError;
 
     # custom measurement
     if(len(qc.clbits)):
@@ -85,7 +89,21 @@ def circuit_counts(qc: QuantumCircuit, shots = 1024) -> None:
     plt.show();
     return None;
 
+######################################################################
+#### mining visualization
 
+def show_mine(arr):
+    '''
+    Show a 2d mine
+    '''
+    import seaborn as sns
+    if( len(np.shape(arr)) != 2): raise ValueError;
+
+    # plot labeled mine
+    sns.heatmap(arr, annot = True, cbar = False, cmap = matplotlib.colormaps["Reds"]);
+    plt.show();
+
+######################################################################
 #### test code
     
 if(__name__ == "__main__"):

@@ -1,5 +1,5 @@
 '''
-https://github.com/cpbunker/learn/qiskit
+https://github.com/cpbunker/learn_qiskit
 '''
 
 import numpy as np
@@ -8,6 +8,7 @@ import qiskit
 from qiskit import QuantumCircuit
 import qiskit.quantum_info as qi
 
+############################################################
 #### type conversions
 
 def int_to_str(n: int) -> str:
@@ -41,7 +42,7 @@ def str_to_qc(s: str, clbits = False) -> QuantumCircuit:
     qc.barrier();
     return qc;
 
-def BLO_to_ham(w: np.ndarray):
+def BLO_to_ham(w: np.ndarray) -> qi.SparsePauliOp:
     '''
     Convert an unconstrained binary linear optimization problem (BLO),
     defined as find state x to minimize w \cdot x, where w is a vector
@@ -60,8 +61,29 @@ def BLO_to_ham(w: np.ndarray):
         hi = qi.SparsePauliOp.from_list([(Zstr,0.5*wi),(Istr,-0.5*wi)]);
         Hop.append(hi);
 
-    return qi.SparsePauliOp.sum(Hop);       
+    return qi.SparsePauliOp.sum(Hop);
 
+############################################################
+#### mining
+
+def get_parents(coords):
+    '''
+    returns a 1d array of the coords of the parents of the block coord
+    '''
+    if(coords.dtype != int): raise TypeError;
+    if(np.shape(coords) != (3,)): raise ValueError;
+
+    # parents are 3 x 3 block w/ z one higher
+    parents = np.zeros((3,3,3));
+    for deltax in [-1,0,1]:
+        for deltay in [-1,0,1]:
+            parents[deltax+1,deltay+1] += np.array([coords[0]+deltax,coords[1]+deltay,coords[2]+1]);
+
+    return parents;
+        
+    
+
+############################################################
 #### misc
 
 def basis_strings(n: int) -> list:
@@ -84,7 +106,6 @@ def basis_strings(n: int) -> list:
         b_strings[i] = bit;
 
     return list(b_strings);   
-
 
 def basis_op(qc: QuantumCircuit) -> None:
     '''

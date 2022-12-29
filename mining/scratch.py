@@ -1,5 +1,8 @@
 '''
 https://github.com/cpbunker/learn/qiskit
+
+Use variational quantum eigensolver (VQE) to solve a binary linear
+optimization (BLO) problem
 '''
 
 import utils
@@ -11,7 +14,7 @@ import matplotlib.pyplot as plt
 import qiskit
 import qiskit.quantum_info as qi
 
-# implement the binary linear optimization problem as a Hamiltonian
+# implement the BLO as a Hamiltonian
 weights = [-1.0,-0.8];
 ham = utils.BLO_to_ham(weights);
 
