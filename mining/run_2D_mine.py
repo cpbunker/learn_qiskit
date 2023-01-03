@@ -13,26 +13,41 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import qiskit
-import qiskit.quantum_info as qi
+import qiskit.quantum_info as qinfo
 
 #######################################################
 #### define the OPM problem
 
 # digging values -> mine object
 values = np.array([[[-2,3,-1]], # indices are z,y,x
-                   [[-9,5,-9]],
-                   [[-9,-9,-9]]]);
+                   [[-9,5,-9]]],dtype=int);
+values = np.ones_like(values);
+shape = np.shape(values);
+special = 5;
+for zi in range(shape[0]):
+    for yi in range(shape[1]):
+        for xi in range(shape[2]):
+            qi = zi*shape[1]*shape[2] + yi*shape[2] + xi;
+            if qi == special: values[zi,yi,xi] = -1;
 mine = mines.mine(values);
 
 # dig some blocks
 dig = np.zeros_like(values);
-dig[1,0] = np.array([1,1,1]);
+dig[0,0] = np.array([1,1,1]);
 dig[1,0,1] = 1;
 mine.set_mined(dig);
 
 # visualize
+mine.unmine();
 mine.show();
 
-# parents
-print("->",mine.smoothness());
+# entangled ansatz
+mine.ansatz();
+#mine.print();
+
+# solve
+mine.solve(method='vqe');
+print(mine.measure());
+
+
 

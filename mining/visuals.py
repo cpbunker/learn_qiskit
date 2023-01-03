@@ -4,7 +4,7 @@ https://github.com/cpbunker/learn_qiskit
 
 import qiskit
 from qiskit import QuantumCircuit
-from qiskit import quantum_info as qi
+from qiskit import quantum_info as qinfo
 
 import numpy as np
 import matplotlib
@@ -14,12 +14,12 @@ import matplotlib.pyplot as plt
 ######################################################################
 #### bloch sphere visualization
 
-def bloch_qubits(state: qi.Statevector, my_title = '') -> None:
+def bloch_qubits(state: qinfo.Statevector, my_title = '') -> None:
     '''
     Take a quantum_info.Statevector object and plot the state of the qubitith
     qubit on the bloch sphere
     '''
-    assert(isinstance(state, qi.Statevector));
+    assert(isinstance(state, qinfo.Statevector));
 
     state.draw(output = 'bloch', title = my_title, reverse_bits = True);
     plt.show();
@@ -27,12 +27,12 @@ def bloch_qubits(state: qi.Statevector, my_title = '') -> None:
     return None;
 
 
-def bloch_state(state: qi.Statevector, vec0: str, vec1: str) -> None:
+def bloch_state(state: qinfo.Statevector, vec0: str, vec1: str) -> None:
     '''
     Draw a (single or multiqubit) state on the bloch sphere with poles vec0, vec1
     '''
     from qiskit.visualization import plot_bloch_vector
-    if(not isinstance(state, qi.Statevector)): raise TypeError;
+    if(not isinstance(state, qinfo.Statevector)): raise TypeError;
     statedict = state.to_dict();
     assert(vec0 in statedict and vec1 in statedict ); # allowed poles
 
@@ -90,26 +90,12 @@ def circuit_counts(qc: QuantumCircuit, shots = 1024) -> None:
     return None;
 
 ######################################################################
-#### mining visualization
-
-def show_mine(arr):
-    '''
-    Show a 2d mine
-    '''
-    import seaborn as sns
-    if( len(np.shape(arr)) != 2): raise ValueError;
-
-    # plot labeled mine
-    sns.heatmap(arr, annot = True, cbar = False, cmap = matplotlib.colormaps["Reds"]);
-    plt.show();
-
-######################################################################
 #### test code
     
 if(__name__ == "__main__"):
 
     # null state
-    null = qi.Statevector.from_label('00');
+    null = qinfo.Statevector.from_label('00');
 
     # phi + bell state
     bell_qc = QuantumCircuit(2);

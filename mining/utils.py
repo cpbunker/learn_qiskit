@@ -6,7 +6,7 @@ import numpy as np
 
 import qiskit
 from qiskit import QuantumCircuit
-import qiskit.quantum_info as qi
+import qiskit.quantum_info as qinfo
 
 ############################################################
 #### type conversions
@@ -42,7 +42,7 @@ def str_to_qc(s: str, clbits = False) -> QuantumCircuit:
     qc.barrier();
     return qc;
 
-def BLO_to_ham(w: np.ndarray) -> qi.SparsePauliOp:
+def BLO_to_ham(w: np.ndarray) -> qinfo.SparsePauliOp:
     '''
     Convert an unconstrained binary linear optimization problem (BLO),
     defined as find state x to minimize w \cdot x, where w is a vector
@@ -61,7 +61,7 @@ def BLO_to_ham(w: np.ndarray) -> qi.SparsePauliOp:
         hi = qi.SparsePauliOp.from_list([(Zstr,0.5*wi),(Istr,-0.5*wi)]);
         Hop.append(hi);
 
-    return qi.SparsePauliOp.sum(Hop);
+    return qinfo.SparsePauliOp.sum(Hop);
 
 ############################################################
 #### mining
