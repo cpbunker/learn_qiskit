@@ -43,8 +43,10 @@ def qc_teleport() -> QuantumCircuit:
     return qc;
 
 # prep state 001
-state0_str = '001';
+state0_str = '000';
+n_qubits = len(state0_str);
 myqc = utils.str_to_qc(state0_str, clbits = True);
+myqc.h(2); myqc.barrier();
 print(myqc.draw());
 
 # teleport q0 -> q2, st 001 -> 100
@@ -53,4 +55,5 @@ print(myqc.draw());
 
 # verify
 myqc.measure([2],[2]);
-visuals.circuit_counts(myqc); # we can see that q2 is always in state 1
+print(myqc.draw());
+visuals.circuit_counts(myqc, which = [2]); # we can see that q2 is always in state 1

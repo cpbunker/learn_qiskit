@@ -2,6 +2,8 @@
 https://github.com/cpbunker/learn/qiskit
 '''
 
+import utils
+
 import qiskit
 from qiskit import QuantumCircuit
 from qiskit import quantum_info as qi
@@ -53,22 +55,33 @@ def bloch_state(state: qi.Statevector, vec0: str, vec1: str) -> None:
 
 #### circuit visualization
 
-def circuit_counts(qc: QuantumCircuit, shots = 1024) -> None:
+def circuit_counts(qc: QuantumCircuit, which = None, shots = 1024) -> None:
     '''
     Do a quantum simulation of myqc and plot histogram of the results
 
-    if qc has clbits, assume there is a measurment scheme manually set up
-    if not we will just measure all the qubits to new clbits
+    measurement:
+    - plotting results: sum over qubits not specified in 'which'
+    - m gates:
+        if qc has clbits, assume there are m gates manually set up.
+        check that these correspond to the clbits in which.
+        if not we will just measure all the qubits to new clbits
     '''
-    assert(isinstance(qc, QuantumCircuit))
+    assert(isinstance(qc, QuantumCircuit));
 
-    # custom measurement
+    # which qubits to count
+    if which == None:
+        which = list(range(qc.num_qubits));
+
+    # whether measurement is needed
     if(len(qc.clbits)):
-        pass; # no need to do anything
+        # make sure qubits we want to count have clbits
+        clbit_indices = [xbit.index for xbit in qc.clbits];
+        for w in which:
+            if w not in clbit_indices: raise ValueError;
 
     else: # measure onto new clbits measure_all
-        qc.measure_all(add_bits = True);  
-
+        qc.measure_all(add_bits = True);
+        
     # run the job
     if True:
         mybackend = Aer.get_backend('qasm_simulator');
@@ -80,6 +93,8 @@ def circuit_counts(qc: QuantumCircuit, shots = 1024) -> None:
         counts = job.result().get_counts();
 
     # show
+    if(len(which) != qc.num_qubits):
+        counts = utils.counts_to_subcounts(which, counts);
     plot_histogram(counts);
     plt.show();
     return None;
