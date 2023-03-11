@@ -9,7 +9,7 @@ import visuals
 
 import qiskit
 from qiskit import QuantumCircuit, QuantumRegister
-import qiskit.quantum_info as qi
+import qiskit.quantum_info as qinfo
 
 def qc_teleport() -> QuantumCircuit:
     '''
@@ -19,24 +19,33 @@ def qc_teleport() -> QuantumCircuit:
     '''
     
     # build q0, q1, q2 as circuit
-    qc = QuantumCircuit(3, 3);
+    n_qubits = 3
+    qc = QuantumCircuit(n_qubits, n_qubits);
 
     # teleportation protocol
 
     # entangle q1 and q2
+    #qc.x(2)
     qc.h(1);
     qc.cx(1,2);
+
+    if True:
+        print(qc.draw())
+        sv = qinfo.Statevector.from_int(0,2**n_qubits);
+        sv = sv.evolve(qc);
+        print(sv.to_dict());
+        assert False;
 
     # entangle q0 and q1 in reverse order
     qc.cx(0,1);
     qc.h(0);
 
     # measure 0 and 1
-    qc.barrier()
+    qc.barrier();
     qc.measure([0,1],[0,1]);
 
     # entangle 1, 2; 0,2
-    qc.barrier()
+    qc.barrier();
     qc.cx(1,2);
     qc.cz(0,2);
     
